@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -19,7 +18,7 @@ func LoggerMW(next HttpHandler) HttpHandler {
 				http.Error(w, http.StatusText(500), 500)
 			}
 		}()
-		fmt.Printf("request received: %v\trequest Method: %v\trequest Body: %v\n", r.RequestURI, r.Method, r.Body)
+		log.Printf("request received: %v\trequest Method: %v\trequest Body: %+v\n", r.RequestURI, r.Method, r.Body)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -37,8 +36,8 @@ func HeaderValidatorMW(next HttpHandler) HttpHandler {
 		}()
 		//validating header
 		contentType := r.Header.Get("Content-Type")
-		if contentType == "" && r.Method == "POST" {
-			http.Error(w, "Error: Request Header must contain Content-Type", http.StatusBadRequest)
+		if contentType == "" && (r.Method == "POST" || r.Method == "PUT") {
+			http.Error(w, "Error: Request Header must contain Json Content-Type", http.StatusBadRequest)
 			return
 		}
 		next.ServeHTTP(w, r)

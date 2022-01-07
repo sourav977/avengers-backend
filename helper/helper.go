@@ -34,6 +34,6 @@ func ConnectToDB() *mongo.Collection {
 		panic(err)
 	}
 	fmt.Println("Successfully connected and pinged.")
-	collection := client.Database("my-db").Collection("employee_record")
+	collection := client.Database("my-db").Collection("avengers")
 	return collection
 }

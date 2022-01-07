@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    ports:
+        - 27017:27017
+  backend:
+    image: terraform-example-avengers:1.0.0
+    container_name: backend
+    restart: always
+    environment: 
+        - MONGO_CONNECTION_URL=mongodb://mongo:27017
+    ports: 
+        - 8000:8000
+    depends_on: 
+        - mongo

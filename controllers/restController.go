@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllAvengers(w http.ResponseWriter, _ *http.Request) {
+func GetAllAvengers(w http.ResponseWriter, r *http.Request) {
 	var avengers []models.Avenger
 	collection := helper.ConnectToDB()
 
@@ -46,6 +46,38 @@ func AddAvenger(w http.ResponseWriter, r *http.Request) {
 
 	result, err := collection.InsertOne(context.TODO(), avenger)
 
+	if err != nil {
+		helper.SetError(err, http.StatusInternalServerError, w)
+		return
+	}
+	//json returntype
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func UpdateAvengerByName(w http.ResponseWriter, r *http.Request) {
+	var avenger models.Avenger
+	collection := helper.ConnectToDB()
+	//decode req body into emp
+	_ = json.NewDecoder(r.Body).Decode(&avenger)
+	//except employeeID, all values can be updated
+	filter := bson.M{"name": avenger.Name}
+	result, err := collection.ReplaceOne(context.TODO(), filter, avenger)
+
+	if err != nil {
+		helper.SetError(err, http.StatusInternalServerError, w)
+		return
+	}
+	//json returntype
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func DeleteAvengerByName(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	collection := helper.ConnectToDB()
+	filter := bson.M{"name": name}
+	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		helper.SetError(err, http.StatusInternalServerError, w)
 		return

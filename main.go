@@ -23,13 +23,17 @@ func main() {
 
 	getAllAvengersHandler := http.HandlerFunc(ctrl.GetAllAvengers)
 	createNewAvengerHandler := http.HandlerFunc(ctrl.AddAvenger)
+	updateAvengerByNameHandler := http.HandlerFunc(ctrl.UpdateAvengerByName)
+	deleteAvengerByNameHandler := http.HandlerFunc(ctrl.DeleteAvengerByName)
 
 	healthcheckHandler := http.HandlerFunc(ctrl.Healthcheck)
 	readinessHandler := http.HandlerFunc(ctrl.Readiness)
 
-	//our two main apis
+	//our main apis
 	mux.Handle("/avengers/getAllAvengers", md.LoggerMW(md.HeaderValidatorMW(getAllAvengersHandler)))
-	mux.Handle("/avengers/createNewAvenger", md.LoggerMW(md.HeaderValidatorMW(md.AvengerMW(createNewAvengerHandler))))
+	mux.Handle("/avengers/createNewAvenger", md.LoggerMW(md.HeaderValidatorMW(md.AvengerValidatorMW(createNewAvengerHandler))))
+	mux.Handle("/avengers/updateAvengerByName", md.LoggerMW(md.HeaderValidatorMW(md.AvengerValidatorMW(updateAvengerByNameHandler))))
+	mux.Handle("/avengers/deleteAvengerByName", md.LoggerMW(md.HeaderValidatorMW(deleteAvengerByNameHandler)))
 
 	//container orch. support
 	mux.Handle("/healthcheck", md.LoggerMW(healthcheckHandler))
@@ -37,7 +41,7 @@ func main() {
 
 	//server config
 	srv := &http.Server{
-		Addr:         "0.0.0.0:8000",
+		Addr:         ":8000",
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
