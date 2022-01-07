@@ -8,7 +8,7 @@ services:
     ports:
         - 27017:27017
   backend:
-    image: terraform-example-avengers:1.0.0
+    image: souravpatnaik/avengers:1.0.0
     container_name: backend
     restart: always
     environment: 

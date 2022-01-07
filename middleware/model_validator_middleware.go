@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -26,6 +28,15 @@ func AvengerValidatorMW(next httpHandler) httpHandler {
 		//for this example lets do the manual way
 		var avenger models.Avenger
 		//decode req body into avenger
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Parse Error, required a valid json-request body", http.StatusBadRequest)
+			return
+		}
+		r2 := r.Clone(r.Context())
+		// clone body
+		r.Body = ioutil.NopCloser(bytes.NewReader(body))
+		r2.Body = ioutil.NopCloser(bytes.NewReader(body))
 		dec := json.NewDecoder(r.Body).Decode(&avenger)
 		if dec != nil {
 			http.Error(w, "Parse Error, required a valid json-request body", http.StatusBadRequest)
@@ -44,6 +55,6 @@ func AvengerValidatorMW(next httpHandler) httpHandler {
 			}
 		*/
 		log.Printf("request received: %+v\n", avenger)
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r2)
 	})
 }
