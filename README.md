@@ -72,6 +72,3 @@ DELETE: http://localhost:8000/avengers/deleteAvengerByName?name=sourav patnaik
     "DeletedCount": 1
 }
 ```
-
-## Github
-https://github.com/sourav977/avengers-backend
