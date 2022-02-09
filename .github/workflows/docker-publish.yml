@@ -17,7 +17,7 @@ env:
   # Use docker.io for Docker Hub if empty
   DOCKER_REGISTRY: docker.io
   # <docker-account>/<docker-repo>
-  IMAGE_NAME: ${{ souravpatnaik/avengers }}
+  IMAGE_NAME: souravpatnaik/avengers
 
 
 jobs:
