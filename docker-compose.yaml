@@ -5,8 +5,8 @@ services:
     image: mongo:latest
     container_name: mongo
     restart: always
-    ports:
-        - 27017:27017
+    networks:
+      - avengers-network
   backend:
     image: souravpatnaik/avengers:1.0.0
     container_name: backend
@@ -17,3 +17,8 @@ services:
         - 8000:8000
     depends_on: 
         - mongo
+    networks:
+      - avengers-network
+networks:
+  avengers-network:
+    driver: bridge
